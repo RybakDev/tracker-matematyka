@@ -164,6 +164,39 @@
     .details { display:none; border-top: 1px solid rgba(255,255,255,.08); padding: 0 13px 13px 67px; color: var(--muted); }
     .details.open { display:block; }
     .details ul { margin: 8px 0 0; padding-left: 18px; line-height: 1.55; }
+    .details-section { margin-top: 12px; }
+    .details-heading { color: var(--text); font-size: 12px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; margin: 12px 0 4px; }
+    .diagnostic-card {
+      margin-top: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      background: rgba(255,255,255,.035);
+      overflow: hidden;
+    }
+    .diagnostic-card summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 12px 14px;
+      color: var(--text);
+      font-weight: 760;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .diagnostic-card summary::-webkit-details-marker { display:none; }
+    .diagnostic-card summary::after { content:'+'; color: var(--muted); font-size: 18px; }
+    .diagnostic-card[open] summary::after { content:'–'; }
+    .diagnostic-hint { color: var(--muted); font-size: 12px; font-weight: 500; }
+    .diagnostic-body { padding: 0 14px 14px; display:grid; gap: 12px; }
+    .diagnostic-group {
+      border-top: 1px solid rgba(255,255,255,.075);
+      padding-top: 10px;
+    }
+    .diagnostic-group-title { color: var(--text); font-size: 13px; font-weight: 750; margin-bottom: 6px; }
+    .diagnostic-list { margin: 0; padding-left: 18px; columns: 2; column-gap: 28px; }
+    .diagnostic-list li { break-inside: avoid; margin: 2px 0; line-height: 1.45; }
+    .micro-count { color: var(--muted); font-size: 11px; border: 1px solid var(--line); border-radius: 999px; padding: 4px 7px; background: rgba(255,255,255,.035); }
     .empty { text-align:center; color: var(--muted); padding: 28px; border: 1px dashed var(--line); border-radius: 20px; }
     .footer { color: var(--muted); font-size: 12px; line-height: 1.6; margin-top: 18px; text-align:center; }
     .hidden { display:none !important; }
@@ -255,6 +288,11 @@
       .section-head { flex-direction: column; align-items: stretch; }
       .section-progress { width: 100%; }
     }
+
+    @media (max-width: 760px) {
+      .diagnostic-list { columns: 1; }
+      .details { padding-left: 13px; }
+    }
   </style>
 </head>
 <body>
@@ -263,7 +301,7 @@
       <div class="topline">
         <div>
           <h1>Tracker Matematyki Konkursowej</h1>
-          <p class="subtitle">Odchudzoną bazę tematów zamieniłem w większe bloki nauki. Kliknij status przy temacie: puste → w trakcie → opanowane. Lokalnie zapisuje się od razu, a przyciski sync pozwalają ręcznie zapisać/wczytać progres z GitHuba przez Cloudflare Worker.</p>
+          <p class="subtitle">Pełna baza nauki w czystym dashboardzie: główne kafelki mierzą progres, a po kliknięciu „Zakres” dostajesz pełną diagnostykę mikroelementów ze źródła. Lokalnie zapisuje się od razu, a sync ręcznie zapisuje/wczytuje progres z GitHuba przez Cloudflare Worker.</p>
         </div>
         <div class="pill"><span class="pulse"></span><span id="saveState">localStorage + GitHub sync</span></div>
       </div>
@@ -300,7 +338,7 @@
       </aside>
       <main class="main" id="main"></main>
     </div>
-    <p class="footer">Legenda: W = wymagane/fundament, IND = konkursy o indeks, OM = olimpiady, ADV = dodatki zaawansowane. Status „w trakcie” liczy się jako połowa progresu.</p>
+    <p class="footer">Legenda: W = wymagane/fundament, IND = konkursy o indeks, OM = olimpiady, ADV = dodatki zaawansowane. Status „w trakcie” liczy się jako połowa progresu. Mikroelementy w diagnostyce nie zwiększają liczby checkboxów — pomagają tylko uczciwie ocenić temat.</p>
   </div>
 
   <div class="modal-backdrop" id="confirmModal" aria-hidden="true">
@@ -330,7 +368,44 @@ const TOPICS = [
       "dowód wprost, przez sprzeczność i przez przypadki",
       "kontrprzykład i wykrywanie błędów w rozumowaniu"
     ],
-    "id": "t001"
+    "id": "t001",
+    "diagnostics": [
+      {
+        "heading": "Logika matematyczna [W]",
+        "items": [
+          "zdanie logiczne,",
+          "wartość logiczna zdania,",
+          "negacja,",
+          "koniunkcja: „i”,",
+          "alternatywa: „lub”,",
+          "implikacja: „jeżeli…, to…”,",
+          "równoważność: „wtedy i tylko wtedy”,",
+          "zaprzeczanie zdań złożonych,",
+          "zaprzeczanie implikacji,",
+          "zaprzeczanie równoważności,",
+          "warunek konieczny,",
+          "warunek wystarczający,",
+          "warunek konieczny i wystarczający,",
+          "rozumienie kwantyfikatorów: „dla każdego”, „istnieje”,",
+          "zaprzeczanie zdań z kwantyfikatorami,",
+          "rozumienie zdań typu: „dla każdego x istnieje y…”,",
+          "różnica między przykładem a dowodem,",
+          "różnica między dowodem a sprawdzeniem kilku przypadków,",
+          "kontrprzykład,",
+          "implikacja odwrotna,",
+          "implikacja przeciwstawna,",
+          "dowód przez sprzeczność,",
+          "dowód przez kontrapozycję,",
+          "dowód wprost,",
+          "dowód przez przypadki,",
+          "dowód istnienia,",
+          "dowód jednoznaczności,",
+          "dowód „istnieje dokładnie jeden”,",
+          "znajdowanie błędów w rozumowaniu."
+        ]
+      }
+    ],
+    "diagnosticCount": 29
   },
   {
     "section": "Fundamenty",
@@ -344,7 +419,35 @@ const TOPICS = [
       "łączenie warunków oraz zapis odpowiedzi",
       "kontrola założeń w zadaniu"
     ],
-    "id": "t002"
+    "id": "t002",
+    "diagnostics": [
+      {
+        "heading": "Zbiory [W]",
+        "items": [
+          "pojęcie zbioru,",
+          "element zbioru,",
+          "podzbiór,",
+          "równość zbiorów,",
+          "zbiór pusty,",
+          "suma zbiorów,",
+          "część wspólna zbiorów,",
+          "różnica zbiorów,",
+          "dopełnienie zbioru,",
+          "iloczyn kartezjański,",
+          "przedziały liczbowe,",
+          "działania na przedziałach,",
+          "zapisywanie zbiorów za pomocą warunku,",
+          "interpretowanie zbiorów rozwiązań,",
+          "dziedzina wyrażenia,",
+          "dziedzina funkcji,",
+          "przecięcie warunków,",
+          "suma przypadków,",
+          "zapisywanie odpowiedzi w postaci przedziałów,",
+          "zapisywanie odpowiedzi w postaci zbioru."
+        ]
+      }
+    ],
+    "diagnosticCount": 20
   },
   {
     "section": "Fundamenty",
@@ -358,7 +461,105 @@ const TOPICS = [
       "wartość bezwzględna jako odległość",
       "porównywanie i szacowanie wyrażeń"
     ],
-    "id": "t003"
+    "id": "t003",
+    "diagnostics": [
+      {
+        "heading": "Zbiory liczbowe [W]",
+        "items": [
+          "liczby naturalne,",
+          "liczby całkowite,",
+          "liczby wymierne,",
+          "liczby niewymierne,",
+          "liczby rzeczywiste,",
+          "liczby pierwsze,",
+          "liczby złożone,",
+          "liczby parzyste i nieparzyste,",
+          "liczby dodatnie, ujemne, nieujemne, niedodatnie,",
+          "liczby odwrotne,",
+          "liczby przeciwne,",
+          "porównywanie liczb,",
+          "oś liczbowa,",
+          "gęstość liczb wymiernych,",
+          "przybliżenia,",
+          "zaokrąglanie,",
+          "notacja naukowa."
+        ]
+      },
+      {
+        "heading": "Działania na liczbach [W]",
+        "items": [
+          "dodawanie,",
+          "odejmowanie,",
+          "mnożenie,",
+          "dzielenie,",
+          "kolejność działań,",
+          "działania na ułamkach,",
+          "działania na liczbach mieszanych,",
+          "działania na liczbach dziesiętnych,",
+          "skracanie ułamków,",
+          "sprowadzanie do wspólnego mianownika,",
+          "szacowanie wartości,",
+          "porównywanie ułamków,",
+          "zamiana ułamków zwykłych na dziesiętne i odwrotnie."
+        ]
+      },
+      {
+        "heading": "Potęgi [W]",
+        "items": [
+          "potęga o wykładniku naturalnym,",
+          "potęga o wykładniku całkowitym,",
+          "potęga o wykładniku wymiernym,",
+          "potęga o wykładniku rzeczywistym — przynajmniej podstawowo,",
+          "mnożenie potęg o tej samej podstawie,",
+          "dzielenie potęg o tej samej podstawie,",
+          "potęga potęgi,",
+          "potęga iloczynu,",
+          "potęga ilorazu,",
+          "ujemny wykładnik,",
+          "zerowy wykładnik,",
+          "porównywanie potęg,",
+          "równania z potęgami,",
+          "nierówności z potęgami,",
+          "wzrost wykładniczy,",
+          "rozkład liczb na potęgi."
+        ]
+      },
+      {
+        "heading": "Pierwiastki [W]",
+        "items": [
+          "pierwiastek kwadratowy,",
+          "pierwiastek sześcienny,",
+          "pierwiastek n-tego stopnia,",
+          "pierwiastek z iloczynu,",
+          "pierwiastek z ilorazu,",
+          "wyłączanie czynnika przed pierwiastek,",
+          "włączanie czynnika pod pierwiastek,",
+          "usuwanie niewymierności z mianownika,",
+          "porównywanie pierwiastków,",
+          "działania na pierwiastkach,",
+          "równania z pierwiastkami,",
+          "nierówności z pierwiastkami,",
+          "warunki istnienia pierwiastków parzystego stopnia."
+        ]
+      },
+      {
+        "heading": "Wartość bezwzględna [W]",
+        "items": [
+          "definicja wartości bezwzględnej,",
+          "interpretacja geometryczna jako odległość od zera,",
+          "odległość dwóch liczb jako `|a-b|`,",
+          "równania z wartością bezwzględną,",
+          "nierówności z wartością bezwzględną,",
+          "rozbijanie na przypadki,",
+          "interpretacja na osi liczbowej,",
+          "wykres funkcji `|x|`,",
+          "przekształcenia wykresów z wartością bezwzględną,",
+          "nierówność trójkąta,",
+          "zadania z parametrem i wartością bezwzględną."
+        ]
+      }
+    ],
+    "diagnosticCount": 70
   },
   {
     "section": "Fundamenty",
@@ -374,7 +575,59 @@ const TOPICS = [
       "sprawdzanie rozwiązań obcych",
       "czytelny zapis pełnego rozwiązania"
     ],
-    "id": "t004"
+    "id": "t004",
+    "diagnostics": [
+      {
+        "heading": "24. Co musisz umieć technicznie przy każdym zadaniu",
+        "items": [
+          "wyznaczyć dziedzinę,",
+          "zapisać założenia,",
+          "sprawdzić warunki zadania,",
+          "rozpoznać typ zadania,",
+          "dobrać metodę,",
+          "nie zgubić przypadków,",
+          "sprawdzić rozwiązania,",
+          "odrzucić rozwiązania obce,",
+          "zapisać odpowiedź w poprawnej formie,",
+          "uzasadnić każdy krok,",
+          "rozumieć, kiedy można dzielić przez wyrażenie,",
+          "rozumieć, kiedy można podnieść do kwadratu,",
+          "rozumieć, kiedy zmienia się znak nierówności,",
+          "rozumieć, kiedy funkcja jest rosnąca/malejąca,",
+          "rozumieć, kiedy można zastosować twierdzenie,",
+          "robić rysunek pomocniczy,",
+          "wprowadzać sensowne oznaczenia,",
+          "rozbijać zadanie na mniejsze części,",
+          "szukać symetrii,",
+          "sprawdzać przypadki graniczne,",
+          "robić test na małych liczbach,",
+          "umieć napisać pełne rozwiązanie, nie tylko wynik."
+        ]
+      },
+      {
+        "heading": "26. Minimalna prawda",
+        "items": [
+          "cały poziom rozszerzony,",
+          "funkcje,",
+          "algebra,",
+          "trygonometria,",
+          "ciągi,",
+          "kombinatoryka,",
+          "prawdopodobieństwo,",
+          "geometria analityczna,",
+          "stereometria,",
+          "granice i pochodne.",
+          "teorię liczb,",
+          "geometrię płaską,",
+          "kombinatorykę,",
+          "nierówności,",
+          "algebrę dowodową,",
+          "indukcję,",
+          "metody dowodzenia."
+        ]
+      }
+    ],
+    "diagnosticCount": 39
   },
   {
     "section": "Algebra",
@@ -388,7 +641,28 @@ const TOPICS = [
       "przekształcanie wzorów",
       "wyrażenia z parametrami"
     ],
-    "id": "t005"
+    "id": "t005",
+    "diagnostics": [
+      {
+        "heading": "Wyrażenia algebraiczne [W]",
+        "items": [
+          "jednomiany,",
+          "sumy algebraiczne,",
+          "redukcja wyrazów podobnych,",
+          "mnożenie sum algebraicznych,",
+          "wyłączanie wspólnego czynnika,",
+          "rozkładanie na czynniki,",
+          "grupowanie wyrazów,",
+          "podstawianie wartości do wyrażeń,",
+          "upraszczanie wyrażeń,",
+          "wyrażenia z parametrami,",
+          "wyrażenia wymierne,",
+          "dziedzina wyrażeń algebraicznych,",
+          "przekształcanie wzorów."
+        ]
+      }
+    ],
+    "diagnosticCount": 13
   },
   {
     "section": "Algebra",
@@ -403,7 +677,29 @@ const TOPICS = [
       "wyłączanie czynnika i grupowanie",
       "rozpoznawanie ukrytych wzorów"
     ],
-    "id": "t006"
+    "id": "t006",
+    "diagnostics": [
+      {
+        "heading": "Wzory skróconego mnożenia [W]",
+        "items": [
+          "`(a+b)^2`,",
+          "`(a-b)^2`,",
+          "`a^2-b^2`,",
+          "`(a+b)^3`,",
+          "`(a-b)^3`,",
+          "`a^3+b^3`,",
+          "`a^3-b^3`,",
+          "`(a+b+c)^2`,",
+          "ogólne rozwinięcia typu `(x+y)^n` dla małych n,",
+          "dwumian Newtona,",
+          "rozpoznawanie ukrytych wzorów,",
+          "dopełnianie do kwadratu,",
+          "zamiana wyrażeń na sumę kwadratów,",
+          "rozkłady niestandardowe."
+        ]
+      }
+    ],
+    "diagnosticCount": 14
   },
   {
     "section": "Algebra",
@@ -418,7 +714,27 @@ const TOPICS = [
       "złożone ułamki algebraiczne",
       "warunki zerowania mianownika"
     ],
-    "id": "t007"
+    "id": "t007",
+    "diagnostics": [
+      {
+        "heading": "Ułamki algebraiczne / wyrażenia wymierne [W]",
+        "items": [
+          "dziedzina wyrażenia wymiernego,",
+          "skracanie wyrażeń wymiernych,",
+          "sprowadzanie do wspólnego mianownika,",
+          "dodawanie ułamków algebraicznych,",
+          "odejmowanie ułamków algebraicznych,",
+          "mnożenie i dzielenie wyrażeń wymiernych,",
+          "rozkład mianownika na czynniki,",
+          "usuwanie złożonych ułamków,",
+          "warunki zerowania mianownika,",
+          "równania wymierne,",
+          "nierówności wymierne,",
+          "podstawienia pomocnicze."
+        ]
+      }
+    ],
+    "diagnosticCount": 12
   },
   {
     "section": "Algebra",
@@ -432,7 +748,40 @@ const TOPICS = [
       "interpretacja geometryczna",
       "zadania tekstowe prowadzące do układów"
     ],
-    "id": "t008"
+    "id": "t008",
+    "diagnostics": [
+      {
+        "heading": "Równania liniowe [W]",
+        "items": [
+          "równanie liniowe z jedną niewiadomą,",
+          "równanie tożsamościowe,",
+          "równanie sprzeczne,",
+          "równania z nawiasami,",
+          "równania z ułamkami,",
+          "równania z parametrem,",
+          "interpretacja geometryczna,",
+          "zadania tekstowe prowadzące do równania liniowego."
+        ]
+      },
+      {
+        "heading": "Układy równań liniowych [W]",
+        "items": [
+          "metoda podstawiania,",
+          "metoda przeciwnych współczynników,",
+          "metoda graficzna,",
+          "układ oznaczony,",
+          "układ nieoznaczony,",
+          "układ sprzeczny,",
+          "układy z parametrem,",
+          "układy 2×2,",
+          "układy 3×3,",
+          "prosta jako równanie liniowe,",
+          "interpretacja układu jako przecięcia prostych,",
+          "zadania tekstowe."
+        ]
+      }
+    ],
+    "diagnosticCount": 20
   },
   {
     "section": "Algebra",
@@ -447,11 +796,35 @@ const TOPICS = [
       "znaki, suma i iloczyn pierwiastków",
       "równania sprowadzalne do kwadratowych"
     ],
-    "id": "t009"
+    "id": "t009",
+    "diagnostics": [
+      {
+        "heading": "Równania kwadratowe [W]",
+        "items": [
+          "postać ogólna,",
+          "postać kanoniczna,",
+          "postać iloczynowa,",
+          "wyróżnik delta,",
+          "liczba rozwiązań,",
+          "wzory na pierwiastki,",
+          "rozkład na czynniki,",
+          "wzory Viète’a,",
+          "równania niezupełne,",
+          "równania z parametrem,",
+          "warunki na liczbę pierwiastków,",
+          "warunki na znaki pierwiastków,",
+          "warunki na sumę i iloczyn pierwiastków,",
+          "równania sprowadzalne do kwadratowych,",
+          "podstawienia typu `t=x^2`,",
+          "równania dwukwadratowe."
+        ]
+      }
+    ],
+    "diagnosticCount": 16
   },
   {
     "section": "Algebra",
-    "title": "Równania wielomianowe",
+    "title": "Wielomiany i równania wielomianowe",
     "tags": [
       "W",
       "OM"
@@ -462,7 +835,56 @@ const TOPICS = [
       "pierwiastki wymierne i wielokrotne",
       "rozkład na czynniki oraz podstawienia"
     ],
-    "id": "t010"
+    "id": "t010",
+    "diagnostics": [
+      {
+        "heading": "Równania wielomianowe [W/OM]",
+        "items": [
+          "stopień równania,",
+          "pierwiastki wielomianu,",
+          "pierwiastki całkowite i wymierne,",
+          "twierdzenie Bézouta,",
+          "twierdzenie o reszcie,",
+          "dzielenie wielomianów,",
+          "schemat Hornera,",
+          "rozkład na czynniki,",
+          "grupowanie,",
+          "podstawienia,",
+          "równania symetryczne,",
+          "równania z parametrem,",
+          "pierwiastki wielokrotne,",
+          "badanie znaku wielomianu,",
+          "wykorzystywanie wzorów Viète’a dla wyższych stopni,",
+          "równania z warunkami całkowitości."
+        ]
+      },
+      {
+        "heading": "Wielomiany [W/OM]",
+        "items": [
+          "definicja wielomianu,",
+          "stopień,",
+          "współczynniki,",
+          "wielomiany równe,",
+          "dodawanie wielomianów,",
+          "mnożenie wielomianów,",
+          "dzielenie wielomianów,",
+          "reszta z dzielenia,",
+          "twierdzenie Bézouta,",
+          "twierdzenie o reszcie,",
+          "pierwiastek wielomianu,",
+          "pierwiastek wielokrotny,",
+          "rozkład na czynniki,",
+          "wielomiany z parametrem,",
+          "pierwiastki wymierne,",
+          "wzory Viète’a,",
+          "relacje między pierwiastkami i współczynnikami,",
+          "znaki pierwiastków,",
+          "wielomiany symetryczne,",
+          "podstawienia w wielomianach."
+        ]
+      }
+    ],
+    "diagnosticCount": 36
   },
   {
     "section": "Algebra",
@@ -477,7 +899,24 @@ const TOPICS = [
       "równania symetryczne i z parametrem",
       "sprawdzanie rozwiązań z dziedziną"
     ],
-    "id": "t011"
+    "id": "t011",
+    "diagnostics": [
+      {
+        "heading": "Równania wymierne [W]",
+        "items": [
+          "ustalanie dziedziny,",
+          "usuwanie mianowników,",
+          "sprawdzanie rozwiązań z dziedziną,",
+          "równania z kilkoma ułamkami,",
+          "równania z parametrem,",
+          "równania prowadzące do kwadratowych,",
+          "równania typu `1/x + 1/y`,",
+          "równania symetryczne,",
+          "równania z podstawieniem pomocniczym."
+        ]
+      }
+    ],
+    "diagnosticCount": 9
   },
   {
     "section": "Algebra",
@@ -491,7 +930,23 @@ const TOPICS = [
       "równania typu |f(x)|=|g(x)|",
       "liczba rozwiązań zależna od parametru"
     ],
-    "id": "t012"
+    "id": "t012",
+    "diagnostics": [
+      {
+        "heading": "Równania z wartością bezwzględną [W]",
+        "items": [
+          "rozwiązywanie z definicji,",
+          "rozwiązywanie geometrycznie,",
+          "rozbijanie na przedziały,",
+          "równania typu `|f(x)|=a`,",
+          "równania typu `|f(x)|=|g(x)|`,",
+          "równania typu `|x-a|+|x-b|=c`,",
+          "równania z parametrem,",
+          "liczba rozwiązań w zależności od parametru."
+        ]
+      }
+    ],
+    "diagnosticCount": 8
   },
   {
     "section": "Algebra",
@@ -506,7 +961,23 @@ const TOPICS = [
       "podnoszenie do kwadratu z kontrolą rozwiązań obcych",
       "podstawienia pomocnicze"
     ],
-    "id": "t013"
+    "id": "t013",
+    "diagnostics": [
+      {
+        "heading": "Równania pierwiastkowe [W/IND]",
+        "items": [
+          "ustalanie dziedziny,",
+          "izolowanie pierwiastka,",
+          "podnoszenie do kwadratu,",
+          "kontrola rozwiązań obcych,",
+          "równania z dwoma pierwiastkami,",
+          "równania z parametrem,",
+          "podstawienia pomocnicze,",
+          "interpretacja graficzna."
+        ]
+      }
+    ],
+    "diagnosticCount": 8
   },
   {
     "section": "Algebra",
@@ -520,7 +991,38 @@ const TOPICS = [
       "dziedzina logarytmów",
       "własności i zmiana podstawy logarytmu"
     ],
-    "id": "t014"
+    "id": "t014",
+    "diagnostics": [
+      {
+        "heading": "Równania wykładnicze [IND]",
+        "items": [
+          "sprowadzanie do tej samej podstawy,",
+          "podstawienie `t=a^x`,",
+          "równania z różnymi podstawami,",
+          "równania wykładniczo-kwadratowe,",
+          "monotoniczność funkcji wykładniczej,",
+          "równania z parametrem,",
+          "porównywanie potęg,",
+          "równania typu `a^{f(x)}=b^{g(x)}`."
+        ]
+      },
+      {
+        "heading": "Równania logarytmiczne [IND]",
+        "items": [
+          "definicja logarytmu,",
+          "dziedzina logarytmu,",
+          "własności logarytmów,",
+          "zmiana podstawy logarytmu,",
+          "równania z jednym logarytmem,",
+          "równania z sumą/różnicą logarytmów,",
+          "podstawienie pomocnicze,",
+          "równania logarytmiczno-kwadratowe,",
+          "równania z parametrem,",
+          "sprawdzanie warunków."
+        ]
+      }
+    ],
+    "diagnosticCount": 18
   },
   {
     "section": "Algebra",
@@ -535,7 +1037,29 @@ const TOPICS = [
       "równania jednorodne i przez podstawienie",
       "interpretacja na okręgu trygonometrycznym"
     ],
-    "id": "t015"
+    "id": "t015",
+    "diagnostics": [
+      {
+        "heading": "Równania trygonometryczne [W/IND]",
+        "items": [
+          "podstawowe wartości sinusa, cosinusa, tangensa,",
+          "równania `sin x = a`,",
+          "równania `cos x = a`,",
+          "równania `tg x = a`,",
+          "równania w przedziale,",
+          "równania ogólne na zbiorze rzeczywistym,",
+          "wzory redukcyjne,",
+          "wzory podwojonego kąta,",
+          "wzory sumy i różnicy,",
+          "równania jednorodne,",
+          "równania przez podstawienie,",
+          "równania typu `a sin x + b cos x = c`,",
+          "równania z parametrem,",
+          "interpretacja na okręgu trygonometrycznym."
+        ]
+      }
+    ],
+    "diagnosticCount": 14
   },
   {
     "section": "Algebra",
@@ -550,7 +1074,61 @@ const TOPICS = [
       "podstawienia s=x+y, p=xy",
       "eliminacja zmiennych i parametry"
     ],
-    "id": "t016"
+    "id": "t016",
+    "diagnostics": [
+      {
+        "heading": "Układy nieliniowe [W/OM]",
+        "items": [
+          "układy kwadratowe,",
+          "układy wielomianowe,",
+          "układy symetryczne,",
+          "podstawienie `s=x+y`, `p=xy`,",
+          "układy z parametrem,",
+          "układy z pierwiastkami,",
+          "układy z wartością bezwzględną,",
+          "układy z warunkami całkowitości,",
+          "eliminacja zmiennych,",
+          "odejmowanie równań stronami,",
+          "dodawanie równań stronami."
+        ]
+      }
+    ],
+    "diagnosticCount": 11
+  },
+  {
+    "section": "Algebra",
+    "title": "Algebra olimpijska i manipulacje wyrażeniami",
+    "tags": [
+      "OM",
+      "ADV"
+    ],
+    "details": [
+      "niestandardowe faktoryzacje i podstawienia",
+      "tożsamości, symetrie i homogenizacja",
+      "sumy oraz iloczyny teleskopowe",
+      "zadania dowodowe z warunkami na wyrażeniach"
+    ],
+    "id": "t064",
+    "diagnostics": [
+      {
+        "heading": "Algebra olimpijska [OM/ADV]",
+        "items": [
+          "faktoryzacje niestandardowe,",
+          "podstawienia pomocnicze,",
+          "symetria wyrażeń,",
+          "homogenizacja,",
+          "nierówności algebraiczne,",
+          "tożsamości algebraiczne,",
+          "manipulacje sumami,",
+          "sumy teleskopowe,",
+          "iloczyny teleskopowe,",
+          "wielomiany z warunkiem na wartości,",
+          "zadania typu „udowodnij, że wyrażenie jest podzielne przez…”,",
+          "zadania typu „znajdź wszystkie funkcje/wielomiany spełniające…”."
+        ]
+      }
+    ],
+    "diagnosticCount": 12
   },
   {
     "section": "Nierówności",
@@ -565,7 +1143,36 @@ const TOPICS = [
       "warunki zawsze dodatnia / ujemna",
       "nierówności z parametrem"
     ],
-    "id": "t017"
+    "id": "t017",
+    "diagnostics": [
+      {
+        "heading": "Nierówności liniowe [W]",
+        "items": [
+          "nierówność liniowa z jedną niewiadomą,",
+          "zmiana znaku przy mnożeniu przez liczbę ujemną,",
+          "zapis przedziałowy,",
+          "układy nierówności liniowych,",
+          "nierówności z parametrem,",
+          "interpretacja na osi liczbowej,",
+          "nierówności liniowe z dwiema niewiadomymi,",
+          "półpłaszczyzny."
+        ]
+      },
+      {
+        "heading": "Nierówności kwadratowe [W]",
+        "items": [
+          "znak trójmianu kwadratowego,",
+          "parabola a znak funkcji,",
+          "miejsca zerowe,",
+          "przypadek delta dodatnia/zerowa/ujemna,",
+          "nierówności z parametrem,",
+          "warunki zawsze dodatnia / zawsze ujemna,",
+          "układy nierówności kwadratowych,",
+          "nierówności sprowadzalne do kwadratowych."
+        ]
+      }
+    ],
+    "diagnosticCount": 16
   },
   {
     "section": "Nierówności",
@@ -580,7 +1187,36 @@ const TOPICS = [
       "punkty wykluczone i asymptoty",
       "nie mnożenie przez wyrażenie o nieznanym znaku"
     ],
-    "id": "t018"
+    "id": "t018",
+    "diagnostics": [
+      {
+        "heading": "Nierówności wielomianowe [W]",
+        "items": [
+          "rozkład wielomianu na czynniki,",
+          "miejsca zerowe,",
+          "pierwiastki wielokrotne,",
+          "metoda przedziałów,",
+          "znak wielomianu,",
+          "nierówności z parametrem,",
+          "wykres przybliżony,",
+          "nierówności z iloczynami czynników."
+        ]
+      },
+      {
+        "heading": "Nierówności wymierne [W]",
+        "items": [
+          "dziedzina,",
+          "miejsca zerowe licznika,",
+          "miejsca zerowe mianownika,",
+          "metoda przedziałów,",
+          "znaki czynników,",
+          "asymptoty i punkty wykluczone,",
+          "nierówności z parametrem,",
+          "nie mnożyć bezmyślnie przez wyrażenie o nieznanym znaku."
+        ]
+      }
+    ],
+    "diagnosticCount": 16
   },
   {
     "section": "Nierówności",
@@ -594,7 +1230,24 @@ const TOPICS = [
       "nierówność trójkąta",
       "nierówności z parametrem"
     ],
-    "id": "t019"
+    "id": "t019",
+    "diagnostics": [
+      {
+        "heading": "Nierówności z wartością bezwzględną [W]",
+        "items": [
+          "interpretacja jako odległość,",
+          "`|x|<a`,",
+          "`|x|>a`,",
+          "`|f(x)|<g(x)`,",
+          "`|f(x)|>|g(x)|`,",
+          "rozbijanie na przypadki,",
+          "nierówność trójkąta,",
+          "nierówności z sumą wartości bezwzględnych,",
+          "nierówności z parametrem."
+        ]
+      }
+    ],
+    "diagnosticCount": 9
   },
   {
     "section": "Nierówności",
@@ -609,7 +1262,38 @@ const TOPICS = [
       "normalizacja i warunek równości",
       "nierówności symetryczne i cykliczne"
     ],
-    "id": "t020"
+    "id": "t020",
+    "diagnostics": [
+      {
+        "heading": "Nierówności dowodowe [OM]",
+        "items": [
+          "AM-GM,",
+          "Cauchy-Schwarz,",
+          "nierówność Schwarza,",
+          "nierówność trójkąta,",
+          "Bernoulli,",
+          "Jensen — przynajmniej idea,",
+          "Chebyshev — opcjonalnie,",
+          "rearrangement — opcjonalnie,",
+          "Nesbitt,",
+          "Titu Andreescu / Engel form,",
+          "suma kwadratów,",
+          "podstawienia dodatnie,",
+          "homogenizacja,",
+          "normalizacja,",
+          "szacowanie z góry i z dołu,",
+          "dowodzenie nierówności przez sprowadzenie do oczywistej,",
+          "dowodzenie przez kwadraty,",
+          "dowodzenie przez monotoniczność,",
+          "nierówności symetryczne,",
+          "nierówności cykliczne,",
+          "nierówności z warunkiem `abc=1`, `a+b+c=const`,",
+          "nierówności geometryczne,",
+          "znajdowanie warunku równości."
+        ]
+      }
+    ],
+    "diagnosticCount": 23
   },
   {
     "section": "Funkcje",
@@ -624,7 +1308,37 @@ const TOPICS = [
       "składanie i funkcja odwrotna",
       "odczytywanie własności z wykresu"
     ],
-    "id": "t021"
+    "id": "t021",
+    "diagnostics": [
+      {
+        "heading": "Pojęcie funkcji [W]",
+        "items": [
+          "definicja funkcji,",
+          "dziedzina,",
+          "przeciwdziedzina,",
+          "zbiór wartości,",
+          "argument,",
+          "wartość funkcji,",
+          "miejsce zerowe,",
+          "wykres funkcji,",
+          "monotoniczność,",
+          "parzystość,",
+          "nieparzystość,",
+          "okresowość,",
+          "ograniczoność,",
+          "maksimum,",
+          "minimum,",
+          "funkcja różnowartościowa,",
+          "funkcja „na”,",
+          "funkcja odwrotna,",
+          "składanie funkcji,",
+          "odczytywanie własności z wykresu,",
+          "rysowanie wykresu z własności,",
+          "przekształcenia wykresów."
+        ]
+      }
+    ],
+    "diagnosticCount": 22
   },
   {
     "section": "Funkcje",
@@ -638,7 +1352,26 @@ const TOPICS = [
       "równoległość i prostopadłość",
       "zadania tekstowe i parametry"
     ],
-    "id": "t022"
+    "id": "t022",
+    "diagnostics": [
+      {
+        "heading": "Funkcja liniowa [W]",
+        "items": [
+          "wzór `f(x)=ax+b`,",
+          "współczynnik kierunkowy,",
+          "wyraz wolny,",
+          "miejsce zerowe,",
+          "monotoniczność,",
+          "równanie prostej,",
+          "proste równoległe,",
+          "proste prostopadłe,",
+          "interpretacja geometryczna,",
+          "funkcja liniowa z parametrem,",
+          "zadania tekstowe."
+        ]
+      }
+    ],
+    "diagnosticCount": 11
   },
   {
     "section": "Funkcje",
@@ -653,7 +1386,28 @@ const TOPICS = [
       "największa/najmniejsza wartość na przedziale",
       "zadania optymalizacyjne i parametry"
     ],
-    "id": "t023"
+    "id": "t023",
+    "diagnostics": [
+      {
+        "heading": "Funkcja kwadratowa [W]",
+        "items": [
+          "postać ogólna,",
+          "postać kanoniczna,",
+          "postać iloczynowa,",
+          "wierzchołek paraboli,",
+          "oś symetrii,",
+          "ramiona paraboli,",
+          "miejsca zerowe,",
+          "monotoniczność,",
+          "zbiór wartości,",
+          "największa/najmniejsza wartość na przedziale,",
+          "zadania optymalizacyjne,",
+          "funkcja kwadratowa z parametrem,",
+          "relacja między deltą a liczbą miejsc zerowych."
+        ]
+      }
+    ],
+    "diagnosticCount": 13
   },
   {
     "section": "Funkcje",
@@ -668,7 +1422,24 @@ const TOPICS = [
       "znak i pierwiastki wielokrotne",
       "parametry i rozkład na czynniki"
     ],
-    "id": "t024"
+    "id": "t024",
+    "diagnostics": [
+      {
+        "heading": "Funkcje wielomianowe [W]",
+        "items": [
+          "stopień wielomianu,",
+          "pierwiastki,",
+          "wykres jakościowy,",
+          "zachowanie na krańcach,",
+          "znak wielomianu,",
+          "pierwiastki wielokrotne,",
+          "rozkład na czynniki,",
+          "monotoniczność — przynajmniej z wykresu lub pochodnej,",
+          "funkcje z parametrem."
+        ]
+      }
+    ],
+    "diagnosticCount": 9
   },
   {
     "section": "Funkcje",
@@ -683,7 +1454,25 @@ const TOPICS = [
       "funkcja homograficzna",
       "badanie znaku z wykresu"
     ],
-    "id": "t025"
+    "id": "t025",
+    "diagnostics": [
+      {
+        "heading": "Funkcje wymierne [W/IND]",
+        "items": [
+          "dziedzina,",
+          "miejsca zerowe,",
+          "asymptoty pionowe,",
+          "asymptoty poziome,",
+          "asymptoty ukośne — zaawansowanie,",
+          "funkcja homograficzna,",
+          "przesunięcia hiperboli,",
+          "rozwiązywanie równań i nierówności z wykresu,",
+          "badanie znaku,",
+          "funkcje wymierne z parametrem."
+        ]
+      }
+    ],
+    "diagnosticCount": 10
   },
   {
     "section": "Funkcje",
@@ -697,7 +1486,40 @@ const TOPICS = [
       "wykresy i przekształcenia",
       "równania i nierówności z funkcji"
     ],
-    "id": "t026"
+    "id": "t026",
+    "diagnostics": [
+      {
+        "heading": "Funkcja wykładnicza [IND]",
+        "items": [
+          "definicja,",
+          "dziedzina,",
+          "zbiór wartości,",
+          "monotoniczność w zależności od podstawy,",
+          "wykres,",
+          "przekształcenia wykresu,",
+          "równania wykładnicze,",
+          "nierówności wykładnicze,",
+          "zadania z procentem składanym,",
+          "wzrost i spadek wykładniczy."
+        ]
+      },
+      {
+        "heading": "Funkcja logarytmiczna [IND]",
+        "items": [
+          "definicja logarytmu,",
+          "dziedzina,",
+          "zbiór wartości,",
+          "monotoniczność,",
+          "wykres,",
+          "przekształcenia wykresu,",
+          "własności logarytmów,",
+          "równania logarytmiczne,",
+          "nierówności logarytmiczne,",
+          "zmiana podstawy."
+        ]
+      }
+    ],
+    "diagnosticCount": 20
   },
   {
     "section": "Funkcje",
@@ -712,7 +1534,27 @@ const TOPICS = [
       "przekształcenia wykresów",
       "równania i nierówności trygonometryczne"
     ],
-    "id": "t027"
+    "id": "t027",
+    "diagnostics": [
+      {
+        "heading": "Funkcje trygonometryczne [W/IND]",
+        "items": [
+          "sinus,",
+          "cosinus,",
+          "tangens,",
+          "cotangens — czasem,",
+          "wykresy funkcji trygonometrycznych,",
+          "okresowość,",
+          "parzystość/nieparzystość,",
+          "miejsca zerowe,",
+          "wartości ekstremalne,",
+          "przekształcenia wykresów,",
+          "równania i nierówności trygonometryczne,",
+          "funkcje trygonometryczne z parametrem."
+        ]
+      }
+    ],
+    "diagnosticCount": 12
   },
   {
     "section": "Ciągi i analiza",
@@ -727,7 +1569,52 @@ const TOPICS = [
       "ciąg arytmetyczny i geometryczny",
       "procent składany i suma nieskończona"
     ],
-    "id": "t028"
+    "id": "t028",
+    "diagnostics": [
+      {
+        "heading": "Podstawy ciągów [W]",
+        "items": [
+          "definicja ciągu,",
+          "wyraz ogólny,",
+          "ciąg skończony i nieskończony,",
+          "ciąg rosnący,",
+          "ciąg malejący,",
+          "ciąg niemalejący,",
+          "ciąg nierosnący,",
+          "ciąg ograniczony,",
+          "ciąg rekurencyjny,",
+          "obliczanie wyrazów ciągu,",
+          "znajdowanie wzoru ogólnego,",
+          "suma początkowych wyrazów."
+        ]
+      },
+      {
+        "heading": "Ciąg arytmetyczny [W]",
+        "items": [
+          "różnica ciągu,",
+          "wzór na n-ty wyraz,",
+          "wzór na sumę,",
+          "średnia arytmetyczna,",
+          "warunek bycia ciągiem arytmetycznym,",
+          "zadania z parametrem,",
+          "zadania tekstowe."
+        ]
+      },
+      {
+        "heading": "Ciąg geometryczny [W]",
+        "items": [
+          "iloraz ciągu,",
+          "wzór na n-ty wyraz,",
+          "wzór na sumę,",
+          "średnia geometryczna,",
+          "warunek bycia ciągiem geometrycznym,",
+          "suma nieskończonego ciągu geometrycznego,",
+          "zadania z parametrem,",
+          "procent składany."
+        ]
+      }
+    ],
+    "diagnosticCount": 27
   },
   {
     "section": "Ciągi i analiza",
@@ -742,7 +1629,24 @@ const TOPICS = [
       "indukcja dla własności ciągów",
       "monotoniczność i ograniczoność rekurencji"
     ],
-    "id": "t029"
+    "id": "t029",
+    "diagnostics": [
+      {
+        "heading": "Rekurencje [OM/ADV]",
+        "items": [
+          "ciągi dane rekurencyjnie,",
+          "znajdowanie wzoru jawnego,",
+          "rekurencje liniowe proste,",
+          "rekurencje z warunkami początkowymi,",
+          "ciąg Fibonacciego,",
+          "dowody własności ciągów przez indukcję,",
+          "monotoniczność ciągu rekurencyjnego,",
+          "ograniczoność ciągu rekurencyjnego,",
+          "granice ciągów rekurencyjnych."
+        ]
+      }
+    ],
+    "diagnosticCount": 9
   },
   {
     "section": "Ciągi i analiza",
@@ -756,7 +1660,47 @@ const TOPICS = [
       "granice z pierwiastkami i ułamkami",
       "ciągłość i asymptoty"
     ],
-    "id": "t030"
+    "id": "t030",
+    "diagnostics": [
+      {
+        "heading": "Granice ciągów [IND]",
+        "items": [
+          "intuicja granicy,",
+          "ciąg zbieżny,",
+          "ciąg rozbieżny,",
+          "granica właściwa,",
+          "granica niewłaściwa,",
+          "działania na granicach,",
+          "twierdzenie o trzech ciągach,",
+          "granice z pierwiastkami,",
+          "granice z potęgami,",
+          "granice z ułamkami,",
+          "symboliczne `n → ∞`,",
+          "szacowanie granic."
+        ]
+      },
+      {
+        "heading": "Granice funkcji [IND]",
+        "items": [
+          "granica funkcji w punkcie,",
+          "granica jednostronna,",
+          "granica w nieskończoności,",
+          "granica właściwa,",
+          "granica niewłaściwa,",
+          "działania na granicach,",
+          "granice z wielomianami,",
+          "granice z funkcjami wymiernymi,",
+          "granice z pierwiastkami,",
+          "granice z wartością bezwzględną,",
+          "asymptoty pionowe,",
+          "asymptoty poziome,",
+          "asymptoty ukośne — warto,",
+          "ciągłość funkcji,",
+          "punkty nieciągłości."
+        ]
+      }
+    ],
+    "diagnosticCount": 27
   },
   {
     "section": "Ciągi i analiza",
@@ -770,7 +1714,29 @@ const TOPICS = [
       "pochodna funkcji złożonej",
       "pochodne wielomianów, wymiernych i potęg"
     ],
-    "id": "t031"
+    "id": "t031",
+    "diagnostics": [
+      {
+        "heading": "Pochodne [IND]",
+        "items": [
+          "definicja pochodnej,",
+          "iloraz różnicowy,",
+          "interpretacja geometryczna pochodnej,",
+          "styczna do wykresu,",
+          "pochodna sumy,",
+          "pochodna różnicy,",
+          "pochodna iloczynu,",
+          "pochodna ilorazu,",
+          "pochodna funkcji złożonej — warto,",
+          "pochodna wielomianu,",
+          "pochodna funkcji wymiernej,",
+          "pochodna pierwiastków/potęg,",
+          "pochodna funkcji wykładniczej i logarytmicznej — zależy od konkursu,",
+          "pochodna funkcji trygonometrycznych — zależy od konkursu."
+        ]
+      }
+    ],
+    "diagnosticCount": 14
   },
   {
     "section": "Ciągi i analiza",
@@ -784,7 +1750,24 @@ const TOPICS = [
       "optymalizacja",
       "liczba rozwiązań równań z pomocą wykresu"
     ],
-    "id": "t032"
+    "id": "t032",
+    "diagnostics": [
+      {
+        "heading": "Zastosowania pochodnej [IND]",
+        "items": [
+          "monotoniczność funkcji,",
+          "ekstrema lokalne,",
+          "maksimum i minimum na przedziale,",
+          "badanie przebiegu zmienności funkcji,",
+          "styczna do wykresu,",
+          "optymalizacja,",
+          "nierówności z pochodną,",
+          "liczba rozwiązań równania z pomocą wykresu,",
+          "parametry z pomocą pochodnej."
+        ]
+      }
+    ],
+    "diagnosticCount": 9
   },
   {
     "section": "Kombinatoryka i prawdopodobieństwo",
@@ -799,7 +1782,24 @@ const TOPICS = [
       "zliczanie na dwa sposoby",
       "unikanie podwójnego liczenia"
     ],
-    "id": "t033"
+    "id": "t033",
+    "diagnostics": [
+      {
+        "heading": "Podstawy zliczania [W/OM]",
+        "items": [
+          "reguła dodawania,",
+          "reguła mnożenia,",
+          "zliczanie przypadków,",
+          "porządkowanie przypadków,",
+          "zliczanie dopełnienia,",
+          "zliczanie na dwa sposoby,",
+          "zasada bijekcji,",
+          "zasada włączeń i wyłączeń,",
+          "unikanie podwójnego liczenia."
+        ]
+      }
+    ],
+    "diagnosticCount": 9
   },
   {
     "section": "Kombinatoryka i prawdopodobieństwo",
@@ -814,7 +1814,28 @@ const TOPICS = [
       "kombinacje i podzbiory",
       "trójkąt Pascala i dwumian Newtona"
     ],
-    "id": "t034"
+    "id": "t034",
+    "diagnostics": [
+      {
+        "heading": "Permutacje, wariacje, kombinacje [W/IND]",
+        "items": [
+          "silnia,",
+          "permutacje bez powtórzeń,",
+          "permutacje z powtórzeniami,",
+          "wariacje bez powtórzeń,",
+          "wariacje z powtórzeniami,",
+          "kombinacje,",
+          "symbol Newtona,",
+          "własności symbolu Newtona,",
+          "trójkąt Pascala,",
+          "dwumian Newtona,",
+          "zliczanie podzbiorów,",
+          "zliczanie funkcji,",
+          "zliczanie ciągów."
+        ]
+      }
+    ],
+    "diagnosticCount": 13
   },
   {
     "section": "Kombinatoryka i prawdopodobieństwo",
@@ -828,7 +1849,22 @@ const TOPICS = [
       "zastosowania do geometrii i kolorowań",
       "dowody istnienia"
     ],
-    "id": "t035"
+    "id": "t035",
+    "diagnostics": [
+      {
+        "heading": "Zasada szufladkowa Dirichleta [OM]",
+        "items": [
+          "podstawowa zasada szufladkowa,",
+          "wersja uogólniona,",
+          "zastosowania do liczb,",
+          "zastosowania do geometrii,",
+          "zastosowania do reszt modulo,",
+          "zastosowania do kolorowań,",
+          "dowody istnienia."
+        ]
+      }
+    ],
+    "diagnosticCount": 7
   },
   {
     "section": "Kombinatoryka i prawdopodobieństwo",
@@ -843,11 +1879,41 @@ const TOPICS = [
       "grafy, drzewa, turnieje",
       "gry, strategie i argument probabilistyczny"
     ],
-    "id": "t036"
+    "id": "t036",
+    "diagnostics": [
+      {
+        "heading": "Zaawansowana kombinatoryka [OM/ADV]",
+        "items": [
+          "kolorowania,",
+          "niezmienniki,",
+          "półniezmienniki,",
+          "zasada ekstremalna,",
+          "grafy,",
+          "wierzchołki i krawędzie,",
+          "stopień wierzchołka,",
+          "ścieżki i cykle,",
+          "graf pełny,",
+          "graf dwudzielny,",
+          "drzewa,",
+          "proste twierdzenia o grafach,",
+          "zadania turniejowe,",
+          "zliczanie na dwa sposoby,",
+          "zasada włączeń-wyłączeń w trudniejszych zadaniach,",
+          "rekurencje kombinatoryczne,",
+          "podziały zbiorów,",
+          "parowanie obiektów,",
+          "argument probabilistyczny — rzadziej,",
+          "gry i strategie,",
+          "strategia wygrywająca,",
+          "symetria w grach."
+        ]
+      }
+    ],
+    "diagnosticCount": 22
   },
   {
     "section": "Kombinatoryka i prawdopodobieństwo",
-    "title": "Prawdopodobieństwo klasyczne",
+    "title": "Prawdopodobieństwo klasyczne i z kombinatoryką",
     "tags": [
       "W",
       "IND"
@@ -858,7 +1924,42 @@ const TOPICS = [
       "kostki, karty i urny",
       "liczenie przypadków sprzyjających"
     ],
-    "id": "t037"
+    "id": "t037",
+    "diagnostics": [
+      {
+        "heading": "Podstawy [W/IND]",
+        "items": [
+          "doświadczenie losowe,",
+          "zdarzenie elementarne,",
+          "przestrzeń zdarzeń,",
+          "zdarzenie pewne,",
+          "zdarzenie niemożliwe,",
+          "zdarzenie przeciwne,",
+          "suma zdarzeń,",
+          "iloczyn zdarzeń,",
+          "różnica zdarzeń,",
+          "prawdopodobieństwo klasyczne,",
+          "własności prawdopodobieństwa,",
+          "prawdopodobieństwo zdarzenia przeciwnego."
+        ]
+      },
+      {
+        "heading": "Prawdopodobieństwo z kombinatoryką [IND]",
+        "items": [
+          "losowanie bez zwracania,",
+          "losowanie ze zwracaniem,",
+          "losowanie z kolejnością,",
+          "losowanie bez kolejności,",
+          "prawdopodobieństwo przy kartach,",
+          "prawdopodobieństwo przy kostkach,",
+          "prawdopodobieństwo przy kulach w urnie,",
+          "zliczanie przypadków sprzyjających,",
+          "zliczanie wszystkich przypadków,",
+          "używanie kombinacji i wariacji."
+        ]
+      }
+    ],
+    "diagnosticCount": 22
   },
   {
     "section": "Kombinatoryka i prawdopodobieństwo",
@@ -872,7 +1973,24 @@ const TOPICS = [
       "prawdopodobieństwo całkowite",
       "dokładnie/co najmniej/co najwyżej k sukcesów"
     ],
-    "id": "t038"
+    "id": "t038",
+    "diagnostics": [
+      {
+        "heading": "Prawdopodobieństwo warunkowe [IND]",
+        "items": [
+          "definicja prawdopodobieństwa warunkowego,",
+          "niezależność zdarzeń,",
+          "prawdopodobieństwo całkowite,",
+          "schemat Bernoulliego,",
+          "próby niezależne,",
+          "drzewka prawdopodobieństwa,",
+          "zadania z co najmniej jednym sukcesem,",
+          "zadania z dokładnie k sukcesami,",
+          "zadania z co najwyżej/co najmniej."
+        ]
+      }
+    ],
+    "diagnosticCount": 9
   },
   {
     "section": "Teoria liczb",
@@ -887,7 +2005,32 @@ const TOPICS = [
       "algorytm Euklidesa",
       "zadania z resztami"
     ],
-    "id": "t039"
+    "id": "t039",
+    "diagnostics": [
+      {
+        "heading": "Podzielność [OM/W]",
+        "items": [
+          "definicja podzielności,",
+          "dzielnik,",
+          "wielokrotność,",
+          "cechy podzielności,",
+          "podzielność przez 2, 3, 4, 5, 8, 9, 10, 11,",
+          "własności podzielności,",
+          "podzielność sumy i różnicy,",
+          "podzielność iloczynu,",
+          "rozkład na czynniki pierwsze,",
+          "liczby pierwsze,",
+          "liczby względnie pierwsze,",
+          "NWD,",
+          "NWW,",
+          "algorytm Euklidesa,",
+          "własności NWD i NWW,",
+          "`NWD(a,b) · NWW(a,b) = ab`,",
+          "zadania z resztami."
+        ]
+      }
+    ],
+    "diagnosticCount": 17
   },
   {
     "section": "Teoria liczb",
@@ -901,7 +2044,30 @@ const TOPICS = [
       "ostatnia i dwie ostatnie cyfry",
       "dowody nieistnienia przez modulo"
     ],
-    "id": "t040"
+    "id": "t040",
+    "diagnostics": [
+      {
+        "heading": "Kongruencje modulo [OM]",
+        "items": [
+          "pojęcie reszty z dzielenia,",
+          "zapis `a ≡ b mod n`,",
+          "dodawanie kongruencji,",
+          "odejmowanie kongruencji,",
+          "mnożenie kongruencji,",
+          "potęgowanie modulo,",
+          "klasy reszt,",
+          "parzystość jako modulo 2,",
+          "modulo 3, 4, 5, 7, 8, 9, 11,",
+          "ostatnia cyfra liczby,",
+          "dwie ostatnie cyfry liczby,",
+          "cykle reszt potęg,",
+          "rozwiązywanie prostych kongruencji,",
+          "dowodzenie nieistnienia rozwiązań przez modulo,",
+          "chińskie twierdzenie o resztach — podstawowo/zaawansowanie."
+        ]
+      }
+    ],
+    "diagnosticCount": 15
   },
   {
     "section": "Teoria liczb",
@@ -915,7 +2081,30 @@ const TOPICS = [
       "rozkład na czynniki i metoda modulo",
       "nieskończone schodzenie i szacowanie"
     ],
-    "id": "t041"
+    "id": "t041",
+    "diagnostics": [
+      {
+        "heading": "Równania diofantyczne [OM]",
+        "items": [
+          "równania w liczbach całkowitych,",
+          "równania liniowe diofantyczne,",
+          "warunek rozwiązalności `ax+by=c`,",
+          "użycie NWD,",
+          "równania kwadratowe w całkowitych,",
+          "rozkład na czynniki,",
+          "metoda modulo,",
+          "metoda nieskończonego schodzenia,",
+          "szacowanie,",
+          "parzystość,",
+          "przypadki,",
+          "równania z liczbami pierwszymi,",
+          "równania typu `xy = k`,",
+          "równania typu `x^2 - y^2`,",
+          "trójki pitagorejskie."
+        ]
+      }
+    ],
+    "diagnosticCount": 15
   },
   {
     "section": "Teoria liczb",
@@ -929,7 +2118,25 @@ const TOPICS = [
       "dowód nieskończoności liczb pierwszych",
       "małe twierdzenie Fermata i Wilson jako dodatki"
     ],
-    "id": "t042"
+    "id": "t042",
+    "diagnostics": [
+      {
+        "heading": "Liczby pierwsze [OM]",
+        "items": [
+          "definicja liczby pierwszej,",
+          "rozkład jednoznaczny,",
+          "dowód nieskończoności liczb pierwszych,",
+          "liczby względnie pierwsze,",
+          "własności dzielników pierwszych,",
+          "jeżeli `p | ab`, to `p | a` lub `p | b`,",
+          "liczby pierwsze w zadaniach modulo,",
+          "małe twierdzenie Fermata — warto znać,",
+          "twierdzenie Wilsona — rzadziej,",
+          "funkcja Eulera — zaawansowanie."
+        ]
+      }
+    ],
+    "diagnosticCount": 10
   },
   {
     "section": "Teoria liczb",
@@ -944,7 +2151,24 @@ const TOPICS = [
       "funkcja Eulera",
       "potęga liczby pierwszej w n! i wzór Legendre’a"
     ],
-    "id": "t043"
+    "id": "t043",
+    "diagnostics": [
+      {
+        "heading": "Funkcje arytmetyczne [ADV/OM]",
+        "items": [
+          "liczba dzielników,",
+          "suma dzielników,",
+          "rozkład kanoniczny liczby,",
+          "liczba dzielników z rozkładu,",
+          "suma dzielników z rozkładu,",
+          "funkcja Eulera,",
+          "własności liczb doskonałych — rzadziej,",
+          "potęga liczby pierwszej w rozkładzie `n!`,",
+          "wzór Legendre’a."
+        ]
+      }
+    ],
+    "diagnosticCount": 9
   },
   {
     "section": "Geometria i trygonometria",
@@ -958,7 +2182,30 @@ const TOPICS = [
       "odległość punktu od prostej",
       "rysunek i oznaczenia w dowodzie"
     ],
-    "id": "t044"
+    "id": "t044",
+    "diagnostics": [
+      {
+        "heading": "Podstawy geometrii [W]",
+        "items": [
+          "punkt,",
+          "prosta,",
+          "odcinek,",
+          "półprosta,",
+          "kąt,",
+          "rodzaje kątów,",
+          "kąty wierzchołkowe,",
+          "kąty przyległe,",
+          "kąty odpowiadające,",
+          "kąty naprzemianległe,",
+          "proste równoległe,",
+          "proste prostopadłe,",
+          "symetralna odcinka,",
+          "dwusieczna kąta,",
+          "odległość punktu od prostej."
+        ]
+      }
+    ],
+    "diagnosticCount": 15
   },
   {
     "section": "Geometria i trygonometria",
@@ -973,7 +2220,38 @@ const TOPICS = [
       "środki trójkąta i okręgi",
       "twierdzenie o dwusiecznej i Heron"
     ],
-    "id": "t045"
+    "id": "t045",
+    "diagnostics": [
+      {
+        "heading": "Trójkąty [W/OM]",
+        "items": [
+          "rodzaje trójkątów,",
+          "suma kątów w trójkącie,",
+          "nierówność trójkąta,",
+          "wysokości,",
+          "środkowe,",
+          "symetralne,",
+          "dwusieczne,",
+          "środek ciężkości,",
+          "ortocentrum,",
+          "środek okręgu opisanego,",
+          "środek okręgu wpisanego,",
+          "pole trójkąta,",
+          "wzór Herona,",
+          "przystawanie trójkątów,",
+          "podobieństwo trójkątów,",
+          "twierdzenie Talesa,",
+          "twierdzenie Pitagorasa,",
+          "twierdzenie odwrotne do Pitagorasa,",
+          "twierdzenie sinusów,",
+          "twierdzenie cosinusów,",
+          "twierdzenie o dwusiecznej,",
+          "twierdzenie o środkowej — warto,",
+          "trójkąty podobne w konfiguracjach olimpijskich."
+        ]
+      }
+    ],
+    "diagnosticCount": 23
   },
   {
     "section": "Geometria i trygonometria",
@@ -988,7 +2266,31 @@ const TOPICS = [
       "warunki wpisywalności i opisywalności",
       "Ptolemeusz i konfiguracje olimpijskie"
     ],
-    "id": "t046"
+    "id": "t046",
+    "diagnostics": [
+      {
+        "heading": "Czworokąty [W/OM]",
+        "items": [
+          "kwadrat,",
+          "prostokąt,",
+          "romb,",
+          "równoległobok,",
+          "trapez,",
+          "deltoid,",
+          "własności przekątnych,",
+          "własności kątów,",
+          "pola czworokątów,",
+          "czworokąt wpisany w okrąg,",
+          "czworokąt opisany na okręgu,",
+          "warunki wpisywalności,",
+          "warunki opisywalności,",
+          "twierdzenie Ptolemeusza — olimpijskie,",
+          "trapez z okręgiem wpisanym,",
+          "równoległobok i podobieństwo."
+        ]
+      }
+    ],
+    "diagnosticCount": 16
   },
   {
     "section": "Geometria i trygonometria",
@@ -1003,7 +2305,37 @@ const TOPICS = [
       "potęga punktu względem okręgu",
       "oś potęgowa i wspólne styczne jako dodatki"
     ],
-    "id": "t047"
+    "id": "t047",
+    "diagnostics": [
+      {
+        "heading": "Okręgi i koła [W/OM]",
+        "items": [
+          "okrąg,",
+          "koło,",
+          "promień,",
+          "średnica,",
+          "cięciwa,",
+          "styczna,",
+          "sieczna,",
+          "łuk,",
+          "kąt środkowy,",
+          "kąt wpisany,",
+          "kąt między styczną a cięciwą,",
+          "twierdzenie o kącie wpisanym,",
+          "kąty oparte na tym samym łuku,",
+          "okrąg opisany na trójkącie,",
+          "okrąg wpisany w trójkąt,",
+          "styczne z jednego punktu,",
+          "potęga punktu względem okręgu — bardzo ważne olimpijsko,",
+          "przecinające się cięciwy,",
+          "sieczna i styczna,",
+          "dwa okręgi styczne,",
+          "oś potęgowa — zaawansowanie,",
+          "wspólne styczne dwóch okręgów."
+        ]
+      }
+    ],
+    "diagnosticCount": 22
   },
   {
     "section": "Geometria i trygonometria",
@@ -1017,7 +2349,30 @@ const TOPICS = [
       "zależność pól figur podobnych",
       "zadania z polami w geometrii olimpijskiej"
     ],
-    "id": "t048"
+    "id": "t048",
+    "diagnostics": [
+      {
+        "heading": "Pola i długości [W]",
+        "items": [
+          "pole trójkąta,",
+          "pole kwadratu,",
+          "pole prostokąta,",
+          "pole równoległoboku,",
+          "pole rombu,",
+          "pole trapezu,",
+          "pole deltoidu,",
+          "pole wielokąta,",
+          "pole koła,",
+          "długość okręgu,",
+          "pole wycinka koła,",
+          "długość łuku,",
+          "zależność pól figur podobnych,",
+          "skala podobieństwa,",
+          "zadania z polami w geometrii olimpijskiej."
+        ]
+      }
+    ],
+    "diagnosticCount": 15
   },
   {
     "section": "Geometria i trygonometria",
@@ -1032,7 +2387,24 @@ const TOPICS = [
       "izometrie",
       "używanie przekształceń w dowodach"
     ],
-    "id": "t049"
+    "id": "t049",
+    "diagnostics": [
+      {
+        "heading": "Przekształcenia geometryczne [W/OM]",
+        "items": [
+          "symetria osiowa,",
+          "symetria środkowa,",
+          "obrót,",
+          "translacja,",
+          "jednokładność,",
+          "podobieństwo,",
+          "izometria,",
+          "kompozycja przekształceń — zaawansowanie,",
+          "używanie przekształceń w dowodach."
+        ]
+      }
+    ],
+    "diagnosticCount": 9
   },
   {
     "section": "Geometria i trygonometria",
@@ -1047,7 +2419,33 @@ const TOPICS = [
       "potęga punktu i oś potęgowa",
       "inwersja, spiralne podobieństwo i masy punktowe jako dodatki"
     ],
-    "id": "t050"
+    "id": "t050",
+    "diagnostics": [
+      {
+        "heading": "Geometria olimpijska [OM/ADV]",
+        "items": [
+          "gonienie kątów,",
+          "podobieństwo ukryte,",
+          "punkty współliniowe,",
+          "proste współpękowe,",
+          "Menelaos — warto,",
+          "Cewa — warto,",
+          "Ptolemeusz,",
+          "potęga punktu,",
+          "oś potęgowa,",
+          "inwersja — zaawansowanie,",
+          "spiralne podobieństwo — zaawansowanie,",
+          "homotetia,",
+          "barycentryczne/masy punktowe — warto,",
+          "konfiguracje z okręgiem wpisanym,",
+          "konfiguracje z okręgiem opisanym,",
+          "styczne i okręgi dopisane,",
+          "kąty w czworokącie wpisanym,",
+          "zadania z maksymalizacją/minimalizacją geometryczną."
+        ]
+      }
+    ],
+    "diagnosticCount": 18
   },
   {
     "section": "Geometria i trygonometria",
@@ -1062,7 +2460,57 @@ const TOPICS = [
       "wzory redukcyjne, sumy i podwojonego kąta",
       "twierdzenie sinusów, cosinusów i pole 1/2ab sinγ"
     ],
-    "id": "t051"
+    "id": "t051",
+    "diagnostics": [
+      {
+        "heading": "Podstawy trygonometrii [W]",
+        "items": [
+          "sinus,",
+          "cosinus,",
+          "tangens,",
+          "cotangens,",
+          "definicje w trójkącie prostokątnym,",
+          "definicje na okręgu jednostkowym,",
+          "miara stopniowa,",
+          "miara łukowa,",
+          "zamiana stopni na radiany,",
+          "wartości dla kątów `0°`, `30°`, `45°`, `60°`, `90°`,",
+          "znaki funkcji w ćwiartkach,",
+          "okresowość,",
+          "kąty skierowane."
+        ]
+      },
+      {
+        "heading": "Wzory trygonometryczne [W/IND]",
+        "items": [
+          "jedynka trygonometryczna,",
+          "zależność między tangensem a sinusem/cosinusem,",
+          "wzory redukcyjne,",
+          "wzory na sumę kątów,",
+          "wzory na różnicę kątów,",
+          "wzory na podwojony kąt,",
+          "wzory na połowę kąta — warto,",
+          "suma i różnica sinusów,",
+          "suma i różnica cosinusów,",
+          "iloczyn na sumę — warto,",
+          "przekształcanie wyrażeń trygonometrycznych."
+        ]
+      },
+      {
+        "heading": "Zastosowania trygonometrii [W/IND]",
+        "items": [
+          "twierdzenie sinusów,",
+          "twierdzenie cosinusów,",
+          "pole trójkąta `1/2 ab sin γ`,",
+          "promień okręgu opisanego,",
+          "promień okręgu wpisanego,",
+          "zadania geometryczne z trygonometrią,",
+          "zadania z wysokością i odległością,",
+          "zadania ze stereometrii."
+        ]
+      }
+    ],
+    "diagnosticCount": 32
   },
   {
     "section": "Geometria i trygonometria",
@@ -1077,7 +2525,31 @@ const TOPICS = [
       "iloczyn skalarny",
       "równoległość i prostopadłość"
     ],
-    "id": "t052"
+    "id": "t052",
+    "diagnostics": [
+      {
+        "heading": "Wektory w geometrii [W/IND]",
+        "items": [
+          "pojęcie wektora,",
+          "długość wektora,",
+          "kierunek i zwrot,",
+          "dodawanie wektorów,",
+          "odejmowanie wektorów,",
+          "mnożenie przez liczbę,",
+          "wektory przeciwne,",
+          "wektory równe,",
+          "współrzędne wektora,",
+          "środek odcinka,",
+          "wektor między punktami,",
+          "iloczyn skalarny,",
+          "kąt między wektorami,",
+          "prostopadłość wektorów,",
+          "równoległość wektorów,",
+          "zastosowanie do geometrii analitycznej."
+        ]
+      }
+    ],
+    "diagnosticCount": 16
   },
   {
     "section": "Geometria i trygonometria",
@@ -1092,7 +2564,36 @@ const TOPICS = [
       "warunki równoległości i prostopadłości",
       "styczne, przecięcia i pole ze współrzędnych"
     ],
-    "id": "t053"
+    "id": "t053",
+    "diagnostics": [
+      {
+        "heading": "Punkty, proste, okręgi [W/IND]",
+        "items": [
+          "układ współrzędnych,",
+          "współrzędne punktu,",
+          "odległość dwóch punktów,",
+          "środek odcinka,",
+          "równanie prostej kierunkowe,",
+          "równanie prostej ogólne,",
+          "równanie prostej przez dwa punkty,",
+          "współczynnik kierunkowy,",
+          "warunek równoległości prostych,",
+          "warunek prostopadłości prostych,",
+          "punkt przecięcia prostych,",
+          "odległość punktu od prostej,",
+          "równanie okręgu,",
+          "środek i promień okręgu,",
+          "wzajemne położenie prostej i okręgu,",
+          "wzajemne położenie dwóch okręgów,",
+          "styczna do okręgu,",
+          "pole trójkąta ze współrzędnych,",
+          "wyznacznik dwóch wektorów,",
+          "kąt między prostymi,",
+          "symetria punktu względem prostej — warto."
+        ]
+      }
+    ],
+    "diagnosticCount": 21
   },
   {
     "section": "Geometria i trygonometria",
@@ -1107,7 +2608,105 @@ const TOPICS = [
       "pola powierzchni i objętości brył",
       "trygonometria w stereometrii"
     ],
-    "id": "t054"
+    "id": "t054",
+    "diagnostics": [
+      {
+        "heading": "Proste, płaszczyzny, kąty [IND/W]",
+        "items": [
+          "prosta w przestrzeni,",
+          "płaszczyzna,",
+          "równoległość prostych,",
+          "równoległość prostej i płaszczyzny,",
+          "równoległość płaszczyzn,",
+          "prostopadłość prostych,",
+          "prostopadłość prostej i płaszczyzny,",
+          "prostopadłość płaszczyzn,",
+          "kąt między prostymi,",
+          "kąt między prostą a płaszczyzną,",
+          "kąt między płaszczyznami,",
+          "rzut prostokątny,",
+          "przekroje brył."
+        ]
+      },
+      {
+        "heading": "Bryły [IND/W]",
+        "items": [
+          "sześcian,",
+          "prostopadłościan,",
+          "graniastosłup,",
+          "ostrosłup,",
+          "czworościan,",
+          "walec,",
+          "stożek,",
+          "kula,",
+          "sfera,",
+          "pole powierzchni,",
+          "objętość,",
+          "przekątne brył,",
+          "przekroje,",
+          "bryły podobne,",
+          "stosunek pól i objętości brył podobnych,",
+          "zadania optymalizacyjne z bryłami,",
+          "trygonometria w stereometrii."
+        ]
+      }
+    ],
+    "diagnosticCount": 30
+  },
+  {
+    "section": "Metody olimpijskie i dodatki",
+    "title": "Metody olimpijskie — pełny zestaw technik",
+    "tags": [
+      "OM",
+      "ADV"
+    ],
+    "details": [
+      "techniki dowodzenia i redukcji problemu",
+      "zasada ekstremalna, szufladkowa i niezmienniki",
+      "modulo, parzystość, konstrukcja i kontrprzykład",
+      "analiza małych przypadków oraz warunków brzegowych"
+    ],
+    "id": "t065",
+    "diagnostics": [
+      {
+        "heading": "20. Metody olimpijskie — osobna lista obowiązkowa",
+        "items": [
+          "dowód wprost,",
+          "dowód nie wprost,",
+          "dowód przez kontrapozycję,",
+          "dowód przez przypadki,",
+          "dowód przez indukcję,",
+          "indukcja mocna,",
+          "nieskończone schodzenie,",
+          "zasada szufladkowa,",
+          "zasada ekstremalna,",
+          "niezmienniki,",
+          "kolorowanie,",
+          "modulo,",
+          "parzystość,",
+          "szacowanie,",
+          "dopełnianie do kwadratu,",
+          "podstawienie pomocnicze,",
+          "rozkład na czynniki,",
+          "zliczanie na dwa sposoby,",
+          "bijekcja,",
+          "konstrukcja przykładu,",
+          "kontrprzykład,",
+          "analiza małych przypadków,",
+          "uogólnianie wzoru,",
+          "sprawdzanie przypadków brzegowych,",
+          "znajdowanie warunku równości,",
+          "dowodzenie istnienia,",
+          "dowodzenie jednoznaczności,",
+          "dowodzenie, że coś jest niemożliwe,",
+          "rysunek pomocniczy w geometrii,",
+          "wprowadzanie oznaczeń,",
+          "praca z parametrem,",
+          "redukcja do prostszego problemu."
+        ]
+      }
+    ],
+    "diagnosticCount": 32
   },
   {
     "section": "Metody olimpijskie i dodatki",
@@ -1122,7 +2721,46 @@ const TOPICS = [
       "indukcja po strukturze/sumie/stopniu",
       "nieskończone schodzenie"
     ],
-    "id": "t055"
+    "id": "t055",
+    "diagnostics": [
+      {
+        "heading": "Indukcja podstawowa [W/OM]",
+        "items": [
+          "baza indukcji,",
+          "założenie indukcyjne,",
+          "krok indukcyjny,",
+          "dowód dla każdego `n`,",
+          "dowodzenie wzorów sum,",
+          "dowodzenie podzielności,",
+          "dowodzenie nierówności,",
+          "dowodzenie własności ciągów,",
+          "dowodzenie zadań kombinatorycznych."
+        ]
+      },
+      {
+        "heading": "Indukcja mocna [OM]",
+        "items": [
+          "różnica między indukcją zwykłą i mocną,",
+          "używanie wszystkich wcześniejszych przypadków,",
+          "zadania z rekurencjami,",
+          "zadania z podziałem obiektów,",
+          "zadania z teorią liczb,",
+          "zadania z geometrią kombinatoryczną."
+        ]
+      },
+      {
+        "heading": "Inne warianty indukcji [OM/ADV]",
+        "items": [
+          "indukcja wsteczna,",
+          "indukcja po liczbie elementów,",
+          "indukcja po sumie,",
+          "indukcja po stopniu wielomianu,",
+          "indukcja po strukturze,",
+          "nieskończone schodzenie Fermata."
+        ]
+      }
+    ],
+    "diagnosticCount": 21
   },
   {
     "section": "Metody olimpijskie i dodatki",
@@ -1137,7 +2775,26 @@ const TOPICS = [
       "iniektywność i surjektywność z równania",
       "sprawdzenie i dowód jednoznaczności"
     ],
-    "id": "t056"
+    "id": "t056",
+    "diagnostics": [
+      {
+        "heading": "Równania funkcyjne [OM/ADV]",
+        "items": [
+          "podstawianie specjalnych wartości,",
+          "podstawienie `x=0`, `y=0`, `x=y`, `x=-y`,",
+          "szukanie funkcji stałych,",
+          "szukanie funkcji liniowych,",
+          "dowodzenie jednoznaczności,",
+          "sprawdzanie znalezionych funkcji,",
+          "funkcje addytywne,",
+          "funkcje multiplikatywne,",
+          "równania Cauchy’ego na poziomie olimpijskim,",
+          "injektywność i surjektywność z równania funkcyjnego,",
+          "iteracje funkcji."
+        ]
+      }
+    ],
+    "diagnosticCount": 11
   },
   {
     "section": "Metody olimpijskie i dodatki",
@@ -1151,7 +2808,24 @@ const TOPICS = [
       "półniezmienniki i monotoniczność",
       "dowody niemożliwości"
     ],
-    "id": "t057"
+    "id": "t057",
+    "diagnostics": [
+      {
+        "heading": "Niezmienniki [OM]",
+        "items": [
+          "kolorowanie planszy,",
+          "parzystość,",
+          "suma modulo,",
+          "reszta modulo,",
+          "znak iloczynu,",
+          "monotoniczność pewnej wielkości,",
+          "niezmiennik geometryczny,",
+          "półniezmiennik,",
+          "dowód niemożliwości."
+        ]
+      }
+    ],
+    "diagnosticCount": 9
   },
   {
     "section": "Metody olimpijskie i dodatki",
@@ -1166,7 +2840,47 @@ const TOPICS = [
       "strategie wygrywające i parowanie ruchów",
       "symetria i analiza małych przypadków"
     ],
-    "id": "t058"
+    "id": "t058",
+    "diagnostics": [
+      {
+        "heading": "Grafy [OM/ADV]",
+        "items": [
+          "graf,",
+          "wierzchołek,",
+          "krawędź,",
+          "stopień wierzchołka,",
+          "suma stopni,",
+          "ścieżka,",
+          "cykl,",
+          "graf spójny,",
+          "graf pełny,",
+          "graf dwudzielny,",
+          "drzewo,",
+          "liść drzewa,",
+          "kolorowanie grafów,",
+          "zadania o znajomych,",
+          "zadania o turniejach,",
+          "zasada ekstremalna w grafach,",
+          "zliczanie krawędzi na dwa sposoby."
+        ]
+      },
+      {
+        "heading": "Gry matematyczne [OM]",
+        "items": [
+          "strategia wygrywająca,",
+          "strategia przegrywająca,",
+          "parowanie ruchów,",
+          "symetria,",
+          "niezmiennik,",
+          "analiza małych przypadków,",
+          "indukcja w grach,",
+          "gry na planszach,",
+          "gry z usuwaniem elementów,",
+          "gry z liczbami."
+        ]
+      }
+    ],
+    "diagnosticCount": 27
   },
   {
     "section": "Metody olimpijskie i dodatki",
@@ -1181,7 +2895,30 @@ const TOPICS = [
       "de Moivre i pierwiastki z jedynki",
       "interpretacja geometryczna"
     ],
-    "id": "t059"
+    "id": "t059",
+    "diagnostics": [
+      {
+        "heading": "Podstawy [ADV/IND]",
+        "items": [
+          "liczba zespolona `a+bi`,",
+          "część rzeczywista,",
+          "część urojona,",
+          "sprzężenie,",
+          "moduł,",
+          "argument,",
+          "postać algebraiczna,",
+          "postać trygonometryczna,",
+          "działania na liczbach zespolonych,",
+          "interpretacja geometryczna,",
+          "równania kwadratowe w zespolonych,",
+          "pierwiastki z liczb zespolonych,",
+          "wzór de Moivre’a,",
+          "pierwiastki z jedynki,",
+          "wielokąty foremne na płaszczyźnie zespolonej."
+        ]
+      }
+    ],
+    "diagnosticCount": 15
   },
   {
     "section": "Metody olimpijskie i dodatki",
@@ -1196,7 +2933,21 @@ const TOPICS = [
       "ogniska i kierownice jako dodatki",
       "podstawowe równania"
     ],
-    "id": "t060"
+    "id": "t060",
+    "diagnostics": [
+      {
+        "heading": "Krzywe stożkowe [ADV/IND]",
+        "items": [
+          "parabola jako miejsce geometryczne,",
+          "elipsa,",
+          "hiperbola,",
+          "podstawowe równania,",
+          "ognisko i kierownica — zaawansowanie,",
+          "interpretacja geometryczna."
+        ]
+      }
+    ],
+    "diagnosticCount": 6
   },
   {
     "section": "Metody olimpijskie i dodatki",
@@ -1211,7 +2962,26 @@ const TOPICS = [
       "metoda Gaussa",
       "układy równań w zapisie macierzowym"
     ],
-    "id": "t061"
+    "id": "t061",
+    "diagnostics": [
+      {
+        "heading": "23. Macierze i algebra liniowa — tylko dla niektórych konkursów / ponadprogramowo",
+        "items": [
+          "macierz,",
+          "dodawanie macierzy,",
+          "mnożenie macierzy przez liczbę,",
+          "mnożenie macierzy,",
+          "wyznacznik 2×2,",
+          "wyznacznik 3×3 — podstawowo,",
+          "układy równań liniowych macierzowo,",
+          "metoda Gaussa,",
+          "rząd macierzy — zaawansowanie,",
+          "wektory w przestrzeni,",
+          "baza i wymiar — bardzo zaawansowanie."
+        ]
+      }
+    ],
+    "diagnosticCount": 11
   },
   {
     "section": "Metody olimpijskie i dodatki",
@@ -1226,7 +2996,30 @@ const TOPICS = [
       "modelowanie równaniem lub układem",
       "interpretacja wykresu i parametrów"
     ],
-    "id": "t062"
+    "id": "t062",
+    "diagnostics": [
+      {
+        "heading": "Zadania praktyczne [W/IND]",
+        "items": [
+          "procenty,",
+          "punkty procentowe,",
+          "oprocentowanie,",
+          "procent składany,",
+          "mieszanki,",
+          "prędkość-droga-czas,",
+          "praca-wydajność-czas,",
+          "zadania z wiekiem,",
+          "zadania z liczbami,",
+          "zadania z geometrią praktyczną,",
+          "zadania optymalizacyjne,",
+          "zadania ekonomiczne,",
+          "zadania z parametrem,",
+          "zadania z interpretacją wykresu,",
+          "zadania wymagające ułożenia równania lub układu."
+        ]
+      }
+    ],
+    "diagnosticCount": 15
   },
   {
     "section": "Metody olimpijskie i dodatki",
@@ -1240,7 +3033,27 @@ const TOPICS = [
       "wariancja i odchylenie standardowe jako dodatki",
       "interpretacja tabel i wykresów"
     ],
-    "id": "t063"
+    "id": "t063",
+    "diagnostics": [
+      {
+        "heading": "22. Statystyka — mniej ważna, ale pod maturę/indeks warto",
+        "items": [
+          "średnia arytmetyczna,",
+          "średnia ważona,",
+          "mediana,",
+          "dominanta,",
+          "rozstęp,",
+          "wariancja — czasem,",
+          "odchylenie standardowe — czasem,",
+          "interpretacja danych,",
+          "wykresy,",
+          "tabele,",
+          "diagramy,",
+          "zależności procentowe."
+        ]
+      }
+    ],
+    "diagnosticCount": 12
   }
 ];
 const SECTIONS = ["Fundamenty", "Algebra", "Nierówności", "Funkcje", "Ciągi i analiza", "Kombinatoryka i prawdopodobieństwo", "Teoria liczb", "Geometria i trygonometria", "Metody olimpijskie i dodatki"];
@@ -1429,9 +3242,15 @@ function matchesFilter(t) {
   if (filter === 'ACTIVE') return s > 0;
   return t.tags.includes(filter);
 }
+function diagnosticsText(t) {
+  return (t.diagnostics || []).flatMap(g => [g.heading, ...(g.items || [])]);
+}
+function diagnosticCount(t) {
+  return (t.diagnostics || []).reduce((sum, g) => sum + (g.items || []).length, 0);
+}
 function matchesQuery(t) {
   if (!query.trim()) return true;
-  const hay = [t.section, t.title, t.tags.join(' '), ...t.details].join(' ').toLowerCase();
+  const hay = [t.section, t.title, t.tags.join(' '), ...t.details, ...diagnosticsText(t)].join(' ').toLowerCase();
   return hay.includes(query.trim().toLowerCase());
 }
 function visibleTopics() { return TOPICS.filter(t => matchesFilter(t) && matchesQuery(t)); }
@@ -1444,8 +3263,23 @@ function renderNav() {
 }
 function slug(s) { return s.toLowerCase().replace(/[^a-z0-9ąćęłńóśźż]+/gi, '-'); }
 function statusText(s) { return STATUS[s].label; }
+function renderDiagnostics(t) {
+  const groups = t.diagnostics || [];
+  if (!groups.length) return '';
+  const total = diagnosticCount(t);
+  return `<details class="diagnostic-card">
+    <summary><span>Pełna diagnostyka szczegółowa</span><span class="diagnostic-hint">${total} mikroelementów</span></summary>
+    <div class="diagnostic-body">
+      ${groups.map(g => `<div class="diagnostic-group">
+        <div class="diagnostic-group-title">${escapeHtml(g.heading)}</div>
+        <ul class="diagnostic-list">${(g.items || []).map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
+      </div>`).join('')}
+    </div>
+  </details>`;
+}
 function renderTopic(t) {
   const s = getStatus(t.id); const st = STATUS[s]; const open = openDetails.has(t.id);
+  const micro = diagnosticCount(t);
   return `<article class="topic" data-topic="${t.id}">
     <div class="topic-main">
       <button class="status-btn ${st.cls}" data-cycle="${t.id}" title="Zmień status">${st.icon}</button>
@@ -1454,12 +3288,17 @@ function renderTopic(t) {
         <div class="topic-sub">
           ${t.tags.map(tag => `<span class="tag ${tag}">${tag}</span>`).join('')}
           <span class="status-text">${statusText(s)}</span>
+          ${micro ? `<span class="micro-count">${micro} mikro</span>` : ''}
         </div>
       </div>
       <button class="details-btn" data-details="${t.id}">${open ? 'Schowaj' : 'Zakres'}</button>
     </div>
     <div class="details ${open ? 'open' : ''}">
-      <ul>${t.details.map(d => `<li>${escapeHtml(d)}</li>`).join('')}</ul>
+      <div class="details-section">
+        <div class="details-heading">Szybki zakres</div>
+        <ul>${t.details.map(d => `<li>${escapeHtml(d)}</li>`).join('')}</ul>
+      </div>
+      ${renderDiagnostics(t)}
     </div>
   </article>`;
 }
